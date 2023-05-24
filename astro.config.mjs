@@ -5,6 +5,9 @@ import netlify from "@astrojs/netlify/functions";
 // read more at doc site: https://astro.build/config
 export default defineConfig({
   integrations: [vue()],
-  output: "server",
+  output: 'hybrid',
+  experimental: {
+    hybridOutput: true,
+  },
   adapter: netlify()
 });

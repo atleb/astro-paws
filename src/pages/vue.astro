@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import NuxtTeaser, { Teaser } from "../components/NuxtTeaser.vue";
 
+export const prerender = false;
+
 function validTeasers(items: any): Teaser[] {
   //filter out only normal teaser, skip bundle - but mainly typecast
   return items.filter((item: any) => item.type === "article");
