@@ -10,8 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/netlify": "^2.2.3",
     "@astrojs/vue": "2.2.0",
-    "astro": "2.5.4",
+    "astro": "^2.5.5",
     "vue": "3.3.4"
   }
 }
