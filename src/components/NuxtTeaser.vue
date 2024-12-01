@@ -10,7 +10,7 @@ export interface Teaser {
   title: { value: string; };
   changes: Changes;
   urls: { relative: string; };
-  promotionContent: PromotionContent;
+  media: PromotionContent;
   section: Section;
   customProperties: CustomProperties;
   authors?: ContentAuthor[];
@@ -20,44 +20,68 @@ export interface Teaser {
   story?: ContentStory;
   lead?: string;
 }
+function mediaUrl(imgId: string) {
+  return "https://vcdn.polarismedia.no/" + imgId + "?fit=crop&h=400&q=80&tight=false&w=650";
+}
 
 const props = defineProps<Teaser>();
 </script>
 
 <template>
   <div :class="customProperties?.frontPageCardSize">
-    <Greet :imgId="promotionContent.imageAsset.id" v-if="promotionContent?.imageAsset" />
     <h4 v-if="customProperties?.breaking == 'true'">VARSKO!</h4>
     <h3>{{ title?.value }}</h3>
-    <p class="lead" v-if="lead && customProperties?.frontPageCardSize == 'medium'">
+    <p class="lead" v-if="lead">
       {{ lead }}
     </p>
+    <img :src="mediaUrl(media.imageAsset.id)" v-if="media?.imageAsset" />
   </div>
 </template>
 
 <style>
 .medium {
   border: 1px dotted sandybrown;
-  margin: 0.5em;
-  padding: 0.5em;
+  margin: 0.25em;
+  padding: 0.25em;
+  display: grid;
+  grid-template-areas:
+    "a a a"
+    "b c c";
+  grid-template-rows: 2.65rem 1fr;
+  grid-template-columns: 1fr 100px 100px;
+}
+
+.medium img {
+  width: 180px;
+  grid-area: c;
 }
 
 .small {
-  border-top: 1px dashed plum;
-  font-size: 70%;
-  display: flex;
+  border-top: 1px dashed #ccc;
+  font-size: 80%;
+  display: grid;
+  grid-template-areas:
+    "a a a"
+    "b b c";
   gap: 5px;
+}
+
+.small img {
+  grid-area: c;
+  width: 100px;
 }
 
 h3 {
   margin: 0;
+  font-size: 1.15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  grid-area: a;
 }
 
 .lead {
   font-size: small;
   margin: 0;
-  display: inline-flex;
+  grid-area: b;
 }
 </style>
-
- 
