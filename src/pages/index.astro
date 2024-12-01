@@ -1,9 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Card from "../components/Card.astro";
+import type { Teaser } from "../components/NuxtTeaser.vue";
+import NuxtTeaser from "../components/NuxtTeaser.vue";
 
-function validTeasers(items: any) {
-  //filter out only normal teaser, skip bundle
+export const prerender = false;
+
+function validTeasers(items: any): Teaser[] {
+  //filter out only normal teaser, skip bundle - but mainly typecast
   return items.filter((item: any) => item.type === "article");
 }
 
@@ -11,25 +14,21 @@ const response = await fetch(
   "https://www.fvn.no/client-api/collection/top/fvn/10"
 );
 const data = await response.json();
-// skip bundle,fix broken build generation
 const teasers = validTeasers(data.items);
+
+// Set cache control headers, new default from Netlify needs adaptation
+Astro.response.headers.set(
+  "CDN-Cache-Control",
+  "public, max-age=300, must-revalidate"
+);
 ---
 
-<Layout title="Welcome to Astro.Vue">
+<Layout title="just Vue">
   <main>
-    <h1>Latest with <span class="text-gradient">Astro</span></h1>
-    <p class="instructions">Read the greatest server rendered news teasers</p>
-    <ul role="list" class="link-card-grid">
-      {
-        teasers.map((teaser: any) => (
-          <Card
-            href={teaser.urls?.relative}
-            title={teaser.title.value}
-            imgId={teaser?.promotionContent?.imageAsset?.id}
-          />
-        ))
-      }
-    </ul>
+    <h2>Luminous news</h2>
+    {teasers.map((teaser) => <NuxtTeaser {...teaser} />)}
+    {/* JS comment syntax will be skipped on build, so use for docs or TODO  */}
+    {/* todo: add wrapper and handle bundles explicitly */}
   </main>
 </Layout>
 
@@ -39,41 +38,10 @@ const teasers = validTeasers(data.items);
     padding: 1.5rem;
     max-width: 60ch;
   }
-  h1 {
-    font-size: 3rem;
+
+  h2 {
+    font-size: 2rem;
     font-weight: 800;
     margin: 0;
-  }
-  .text-gradient {
-    background-image: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 400%;
-    background-position: 0%;
-  }
-  .instructions {
-    line-height: 1.6;
-    margin: 1rem 0;
-    border: 1px solid rgba(var(--accent), 25%);
-    background-color: white;
-    padding: 1rem;
-    border-radius: 0.4rem;
-  }
-  .instructions code {
-    font-size: 0.875em;
-    font-weight: bold;
-    background: rgba(var(--accent), 12%);
-    color: rgb(var(--accent));
-    border-radius: 4px;
-    padding: 0.3em 0.45em;
-  }
-  .instructions strong {
-    color: rgb(var(--accent));
-  }
-  .link-card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-    gap: 1rem;
-    padding: 0;
   }
 </style>
