@@ -1,11 +1,11 @@
 import { defineConfig } from "astro/config";
 import vue from "@astrojs/vue";
-import netlify from "@astrojs/netlify/edge-functions";
+import netlify from "@astrojs/netlify/functions";
 
 // read more at doc site: https://astro.build/config
 export default defineConfig({
   integrations: [vue()],
-  output: "server",
+  output: "hybrid",
   adapter: netlify({
     imageCDN: false,
     cacheOnDemandPages: true, // default to up to one year, set headers to specify
