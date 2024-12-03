@@ -7,7 +7,7 @@ import netlify from "@astrojs/netlify";
 
 const prodConfig = {
   integrations: [vue()],
-  output: "hybrid",
+  output: "server",
   adapter: netlify({
     imageCDN: false,
     cacheOnDemandPages: true, // default to up to one year, set headers to specify
