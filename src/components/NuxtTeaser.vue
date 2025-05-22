@@ -28,6 +28,7 @@ const props = defineProps<Teaser>();
 </script>
 
 <template>
+
   <a :href="`https://www.fvn.no/i/${id}`" class="teaser-link-wrapper">
     <!-- 
       Root element for the teaser.
@@ -50,6 +51,7 @@ const props = defineProps<Teaser>();
 </template>
 
 <style>
+
 /* Styling for the anchor tag that wraps the entire teaser */
 .teaser-link-wrapper {
   display: block; /* Ensures the link takes up the full width of its container */
