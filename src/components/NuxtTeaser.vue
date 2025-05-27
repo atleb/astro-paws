@@ -84,6 +84,9 @@ const props = defineProps<Teaser>();
 
 /* Default styles for the main teaser container */
 .teaser-container {
+  display: block; /* Ensure it behaves as a block-level element */
+  width: 100%; /* Explicitly take full width for mobile-first */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
   padding: var(--teaser-padding); /* Uses the base padding unit */
   border: 1px solid var(--color-border-default); /* Default border styling */
   /* margin-bottom is important for spacing between teasers. 
@@ -143,15 +146,6 @@ const props = defineProps<Teaser>();
   gap: 0.5em; /* Gap between grid cells */
 }
 
-.medium img {
-  width: 100%; /* Image takes full width of its grid area */
-  height: auto; /* Maintains aspect ratio */
-  max-width: 200px; /* Maximum width for the image in medium cards */
-  grid-area: c; /* Assigns image to the 'c' grid area */
-  align-self: center; /* Vertically centers the image in its grid cell */
-  border-radius: var(--teaser-border-radius); /* Rounded corners for the image */
-}
-
 /* Specific title styling for medium variant */
 .medium h3 {
   font-size: 1.1rem; /* Overrides default title font-size for medium cards */
@@ -178,13 +172,21 @@ const props = defineProps<Teaser>();
   grid-template-rows: auto 1fr; /* Title row auto, content row takes remaining space */
 }
 
+/* Combined image styles for medium and small variants */
+.medium img, .small img {
+  grid-area: c;
+  width: 100%;
+  height: auto;
+  align-self: center;
+  border-radius: var(--teaser-border-radius);
+}
+
+.medium img {
+  max-width: 200px; /* Maximum width for the image in medium cards */
+}
+
 .small img {
-  grid-area: c; /* Assigns image to the 'c' grid area */
-  width: 100%; /* Image takes full width of its grid area */
-  height: auto; /* Maintains aspect ratio */
-  max-width: 120px; /* Maximum width for the image in small cards */
-  align-self: center; /* Vertically centers the image */
-  border-radius: var(--teaser-border-radius); /* Rounded corners */
+  max-width: 100px; /* Maximum width for the image in small cards - adjusted to be "tiny" */
 }
 
 /* Specific title styling for small variant */
