@@ -98,6 +98,13 @@ const props = defineProps<Teaser>();
   transition: box-shadow 0.3s ease; /* Smooth transition for hover effects */
 }
 
+  .no-image {
+  grid-template-areas:
+    "a a"  /* Title spans full width */
+    "b b"; /* Lead text now spans full width */
+  /* The lead text (area 'b') will now span both  columns defined in grid-template-columns. */
+}
+
 /* Enhanced shadow on hover for better interactivity */
 /* This hover effect remains on .teaser-container. When the <a> is hovered, 
    the .teaser-container inside it will trigger this style. */
@@ -142,7 +149,7 @@ const props = defineProps<Teaser>();
     "a a a"  /* Title area */
     "b c c"; /* Lead text area (b) and Image area (c) */
   grid-template-rows: auto 1fr; /* Title row height based on content, second row takes remaining space */
-  grid-template-columns: 1fr 120px 120px; /* Defines column widths, image area is last two columns */
+  grid-template-columns: 1fr 100px 100px; /* Defines column widths, image area is last two columns */
   gap: 0.5em; /* Gap between grid cells */
 }
 
@@ -151,13 +158,6 @@ const props = defineProps<Teaser>();
   font-size: 1.1rem; /* Overrides default title font-size for medium cards */
 }
 
-/* Adjust grid layout for .medium teasers when no image is present */
-.medium.no-image {
-  grid-template-areas:
-    "a a a"  /* Title spans full width */
-    "b b b"; /* Lead text now spans full width */
-  /* The lead text (area 'b') will now span all three columns defined in .medium's grid-template-columns. */
-}
 
 /* Styles for the "small" card size variant */
 /* This variant also uses a grid layout, similar to medium but more compact */
@@ -166,8 +166,8 @@ const props = defineProps<Teaser>();
   padding: calc(var(--teaser-padding) * 0.8); /* Slightly reduced padding for smaller cards */
   display: grid;
   grid-template-areas:
-    "a a a"  /* Title area */
-    "b b c"; /* Lead text area (b) and Image area (c) - image takes less relative space */
+    "a a "  /* Title area */
+    "b c"; /* Lead text area (b) and Image area (c) - image takes less relative space */
   gap: 0.3em; /* Smaller gap for compact layout */
   grid-template-rows: auto 1fr; /* Title row auto, content row takes remaining space */
 }
@@ -200,14 +200,6 @@ const props = defineProps<Teaser>();
   /* Other .lead styles like line-height, margin, and ellipsis are inherited */
 }
 
-/* Adjust grid layout for .small teasers when no image is present */
-.small.no-image {
-  grid-template-areas:
-    "a a a"  /* Title spans full width */
-    "b b b"; /* Lead text now spans full width */
-  /* The lead text (area 'b') will now span all columns defined in .small's grid-template-columns (implicitly or explicitly). */
-}
-
 /* General styling for the main title (h3) */
 /* Applied to all teasers; font-size can be overridden by specific variant styles (e.g., .medium h3) */
 h3 {
@@ -220,7 +212,7 @@ h3 {
   display: -webkit-box; 
   -webkit-line-clamp: 2; /* Number of lines to show before truncating */
   -webkit-box-orient: vertical; /* Required for -webkit-line-clamp to work */
-  /* grid-area: a; is implicitly assigned via parent grid-template-areas for .medium and .small variants */
+  grid-area: a; /* Needs to be explicit for revised style... */
 }
 
 /* General styling for the lead text paragraph */
@@ -234,17 +226,9 @@ h3 {
   display: -webkit-box;
   -webkit-line-clamp: 3; /* Number of lines to show */
   -webkit-box-orient: vertical; /* Required for -webkit-line-clamp */
-  /* grid-area: b; is applied by .medium and .small variants */
+  grid-area: b; /* baseline for revised */
 }
 
-/* Styles for default layout (when not .medium or .small) */
-/* Ensures elements flow naturally when not in a grid variant. */
-.teaser-container:not(.medium):not(.small) h3 {
-  grid-area: unset; /* Resets grid area assignment */
-}
-.teaser-container:not(.medium):not(.small) .lead {
-  grid-area: unset; /* Resets grid area assignment */
-}
 .teaser-container:not(.medium):not(.small) img {
   width: 100%; /* Image takes full width in default layout */
   height: auto; /* Maintain aspect ratio */
