@@ -26,7 +26,9 @@ Astro.response.headers.set(
 <Layout title="just Vue">
   <main>
     <h2>Luminous news</h2>
-    {teasers.map((teaser) => <NuxtTeaser {...teaser} />)}
+    <div class="teaser-grid-container">
+      {teasers.map((teaser) => <NuxtTeaser {...teaser} />)}
+    </div>
     {/* JS comment syntax will be skipped on build, so use for docs or TODO  */}
     {/* todo: add wrapper and handle bundles explicitly */}
   </main>
@@ -36,7 +38,24 @@ Astro.response.headers.set(
   main {
     margin: auto;
     padding: 1.5rem;
-    max-width: 60ch;
+    max-width: 60ch; /* Default max-width */
+  }
+
+  .teaser-grid-container {
+    /* Default is single column, which divs naturally do.
+       Or, be explicit for clarity if other flex/grid styles might interfere: */
+    display: block; /* Or display: flex; flex-direction: column; */
+  }
+
+  @media (min-width: 1200px) { /* Adjust breakpoint as needed for "large desktop" */
+    main {
+      max-width: 120ch; /* Increase max-width to accommodate two columns. Adjust as needed. */
+    }
+    .teaser-grid-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+      gap: 1.5rem; /* Adjust gap as desired, matches main padding */
+    }
   }
 
   h2 {
