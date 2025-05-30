@@ -48,9 +48,9 @@ const sectionClass = computed(() => {
       - 'breaking-news' class conditionally if `customProperties.breaking` is true.
     - 'no-image' class conditionally if `media.imageAsset.id` is falsy.
     -->
-  <div :class="['teaser-container', customProperties?.frontPageCardSize, { 'breaking-news': customProperties?.breaking == 'true', 'no-image': !media?.imageAsset?.id }, sectionClass]">
+  <div :class="['teaser-container', customProperties?.frontPageCardSize, { 'breaking-news': customProperties?.breaking === true, 'no-image': !media?.imageAsset?.id }, sectionClass]">
       <!-- Conditional "VARSKO!" heading for breaking news -->
-      <h4 v-if="customProperties?.breaking == 'true'" class="breaking-news-heading">VARSKO!</h4>
+      <h4 v-if="customProperties?.breaking === true" class="breaking-news-heading">VARSKO!</h4>
       <span v-if="access && !access.paywall" class="open-access-icon">OPEN</span>
       <h3>{{ title?.value }}</h3>
     <p class="lead" v-if="lead">
