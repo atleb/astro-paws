@@ -35,6 +35,48 @@ const sectionClass = computed(() => {
   }
   return '';
 });
+
+// Computed property for breaking news
+const isBreakingNews = computed(() => props.customProperties?.breaking === true);
+
+// Computed property for open access
+const isOpenAccess = computed(() => props.access && !props.access.paywall);
+
+// Computed property for showing tag count badge
+const showTagCountBadge = computed(() => props.tags && props.tags.length > 3);
+
+// Computed property for showing author count badge
+const showAuthorCountBadge = computed(() => props.authors && props.authors.length > 1);
+
+// Computed property for checking if image exists
+const hasImage = computed(() => !!props.media?.imageAsset?.id);
+
+// Computed property for teaser classes
+const teaserClasses = computed(() => {
+  const classes = ['teaser-container'];
+  if (props.customProperties?.frontPageCardSize) {
+    classes.push(props.customProperties.frontPageCardSize);
+  }
+  if (isBreakingNews.value) {
+    classes.push('breaking-news');
+  }
+  if (!hasImage.value) {
+    classes.push('no-image');
+  }
+  if (sectionClass.value) {
+    classes.push(sectionClass.value);
+  }
+  // Apply non-news background only if it's not also breaking news
+  if (isNonNewsPresentation.value && !isBreakingNews.value) {
+    classes.push('non-news-bg');
+  }
+  return classes;
+});
+
+// Computed property for non-news presentation
+const isNonNewsPresentation = computed(() => {
+  return !!(props.customProperties?.presentation && props.customProperties.presentation !== 'news');
+});
 </script>
 
 <template>
@@ -45,54 +87,51 @@ const sectionClass = computed(() => {
       Applies:
       - Base 'teaser-container' class for general styling.
       - Dynamic class for card size (e.g., 'medium', 'small') from `customProperties.frontPageCardSize`.
-      - 'breaking-news' class conditionally if `customProperties.breaking` is true.
-    - 'no-image' class conditionally if `media.imageAsset.id` is falsy.
+      - 'breaking-news' class conditionally if `isBreakingNews` is true.
+    - 'no-image' class conditionally if `hasImage` is falsy.
     -->
-  <div :class="['teaser-container', customProperties?.frontPageCardSize, { 'breaking-news': customProperties?.breaking === true, 'no-image': !media?.imageAsset?.id }, sectionClass]">
+  <div :class="teaserClasses">
       <!-- Conditional "VARSKO!" heading for breaking news -->
-      <h4 v-if="customProperties?.breaking === true" class="breaking-news-heading">VARSKO!</h4>
-      <span v-if="access && !access.paywall" class="open-access-icon">OPEN</span>
+      <h4 v-if="isBreakingNews" class="breaking-news-heading">VARSKO!</h4>
+      <span v-if="isOpenAccess" class="open-access-icon">OPEN</span>
       <h3>{{ title?.value }}</h3>
     <p class="lead" v-if="lead">
       {{ lead }}
     </p>
-    <span v-if="tags && tags.length > 3" class="tag-count-badge">3+ tags</span>
-    <span v-if="authors && authors.length > 1" class="author-count-badge">2+ authors</span>
-    <img :src="mediaUrl(media.imageAsset.id)" v-if="media?.imageAsset?.id" />
+    <span v-if="showTagCountBadge" class="tag-count-badge">3+ tags</span>
+    <span v-if="showAuthorCountBadge" class="author-count-badge">2+ authors</span>
+    <img :src="mediaUrl(media.imageAsset.id)" v-if="hasImage" />
     </div>
   </a>
 </template>
 
 <style>
 
-/* 
-  Color suggestions for section-specific borders:
-
-  .section-sports {
-    border-left: 5px solid #008000;  // Green
-  }
-  .section-nyheter { // Assuming 'Nyheter' (News)
-    border-left: 5px solid #0000FF;  // Blue
-  }
-  .section-okonomi { // Assuming 'Økonomi' (Economy)
-    border-top: 5px solid #FFD700;   // Gold
-  }
-  .section-kultur { // Assuming 'Kultur' (Culture)
-    border-top: 5px solid #800080;   // Purple
-  }
-  .section-meninger { // Assuming 'Meninger' (Opinions)
-    border-left: 5px solid #FFA500;  // Orange
-  }
-  .section-teknologi { // Assuming 'Teknologi' (Technology)
-    border-top: 5px solid #4682B4;   // Steel Blue
-  }
-  .section-reise { // Assuming 'Reise' (Travel)
-    border-left: 5px solid #20B2AA;  // Light Sea Green
-  }
-  .section-mat-og-drikke { // Assuming 'Mat og drikke' (Food and Drink)
-    border-top: 5px solid #D2691E;   // Chocolate
-  }
-*/
+/* Color suggestions for section-specific borders: */
+.section-sports {
+  border-left: 5px solid #008000;  /* Green */
+}
+.section-nyheter { /* Assuming 'Nyheter' (News) */
+  border-left: 5px solid #0000FF;  /* Blue */
+}
+.section-okonomi { /* Assuming 'Økonomi' (Economy) */
+  border-top: 5px solid #FFD700;   /* Gold */
+}
+.section-kultur { /* Assuming 'Kultur' (Culture) */
+  border-top: 5px solid #800080;   /* Purple */
+}
+.section-meninger { /* Assuming 'Meninger' (Opinions) */
+  border-left: 5px solid #FFA500;  /* Orange */
+}
+.section-teknologi { /* Assuming 'Teknologi' (Technology) */
+  border-top: 5px solid #4682B4;   /* Steel Blue */
+}
+.section-reise { /* Assuming 'Reise' (Travel) */
+  border-left: 5px solid #20B2AA;  /* Light Sea Green */
+}
+.section-mat-og-drikke { /* Assuming 'Mat og drikke' (Food and Drink) */
+  border-top: 5px solid #D2691E;   /* Chocolate */
+}
 
 /* Styling for the anchor tag that wraps the entire teaser */
 .teaser-link-wrapper {
@@ -319,5 +358,10 @@ h3 {
   margin-left: 0.5em; /* Space to the left if tag badge is also present */
   margin-bottom: 0.5em; /* Space below the badge if image is not present */
   line-height: 1; /* Ensure line height doesn't add extra space */
+}
+
+/* Styling for non-news background */
+.non-news-bg {
+  background-color: #f8f8f8; /* Light grey background */
 }
 </style>
