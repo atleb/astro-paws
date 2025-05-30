@@ -24,7 +24,17 @@ function mediaUrl(imgId: string) {
   return "https://vcdn.polarismedia.no/" + imgId + "?fit=crop&h=400&q=80&tight=false&w=650";
 }
 
+import { computed } from 'vue';
+
 const props = defineProps<Teaser>();
+
+// Computed property for dynamic section class
+const sectionClass = computed(() => {
+  if (props.section && props.section.title) {
+    return `section-${props.section.title.toLowerCase().replace(/\s+/g, '-')}`;
+  }
+  return '';
+});
 </script>
 
 <template>
@@ -38,19 +48,51 @@ const props = defineProps<Teaser>();
       - 'breaking-news' class conditionally if `customProperties.breaking` is true.
     - 'no-image' class conditionally if `media.imageAsset.id` is falsy.
     -->
-  <div :class="['teaser-container', customProperties?.frontPageCardSize, { 'breaking-news': customProperties?.breaking == 'true', 'no-image': !media?.imageAsset?.id }]">
+  <div :class="['teaser-container', customProperties?.frontPageCardSize, { 'breaking-news': customProperties?.breaking == 'true', 'no-image': !media?.imageAsset?.id }, sectionClass]">
       <!-- Conditional "VARSKO!" heading for breaking news -->
       <h4 v-if="customProperties?.breaking == 'true'" class="breaking-news-heading">VARSKO!</h4>
+      <span v-if="access && !access.paywall" class="open-access-icon">OPEN</span>
       <h3>{{ title?.value }}</h3>
     <p class="lead" v-if="lead">
       {{ lead }}
     </p>
+    <span v-if="tags && tags.length > 3" class="tag-count-badge">3+ tags</span>
+    <span v-if="authors && authors.length > 1" class="author-count-badge">2+ authors</span>
     <img :src="mediaUrl(media.imageAsset.id)" v-if="media?.imageAsset?.id" />
     </div>
   </a>
 </template>
 
 <style>
+
+/* 
+  Color suggestions for section-specific borders:
+
+  .section-sports {
+    border-left: 5px solid #008000;  // Green
+  }
+  .section-nyheter { // Assuming 'Nyheter' (News)
+    border-left: 5px solid #0000FF;  // Blue
+  }
+  .section-okonomi { // Assuming 'Økonomi' (Economy)
+    border-top: 5px solid #FFD700;   // Gold
+  }
+  .section-kultur { // Assuming 'Kultur' (Culture)
+    border-top: 5px solid #800080;   // Purple
+  }
+  .section-meninger { // Assuming 'Meninger' (Opinions)
+    border-left: 5px solid #FFA500;  // Orange
+  }
+  .section-teknologi { // Assuming 'Teknologi' (Technology)
+    border-top: 5px solid #4682B4;   // Steel Blue
+  }
+  .section-reise { // Assuming 'Reise' (Travel)
+    border-left: 5px solid #20B2AA;  // Light Sea Green
+  }
+  .section-mat-og-drikke { // Assuming 'Mat og drikke' (Food and Drink)
+    border-top: 5px solid #D2691E;   // Chocolate
+  }
+*/
 
 /* Styling for the anchor tag that wraps the entire teaser */
 .teaser-link-wrapper {
@@ -234,5 +276,48 @@ h3 {
   height: auto; /* Maintain aspect ratio */
   margin-top: 0.5em; /* Space above the image */
   border-radius: var(--teaser-border-radius); /* Rounded corners */
+}
+
+/* Styling for the Open Access icon */
+.open-access-icon {
+  display: inline-block;
+  background-color: #28a745; /* Green background */
+  color: white; /* White text */
+  padding: 0.2em 0.5em; /* Small padding */
+  font-size: 0.7rem; /* Smaller font size */
+  font-weight: bold;
+  border-radius: var(--teaser-border-radius); /* Use existing border radius */
+  margin-right: 0.5em; /* Space between icon and title */
+  text-transform: uppercase;
+  line-height: 1; /* Ensure line height doesn't add extra space */
+}
+
+/* Styling for the Tag Count badge */
+.tag-count-badge {
+  display: inline-block;
+  background-color: #6c757d; /* Grey background */
+  color: white; /* White text */
+  padding: 0.2em 0.5em; /* Small padding */
+  font-size: 0.7rem; /* Smaller font size */
+  font-weight: normal;
+  border-radius: var(--teaser-border-radius); /* Use existing border radius */
+  margin-top: 0.5em; /* Space above the badge */
+  margin-bottom: 0.5em; /* Space below the badge if image is not present */
+  line-height: 1; /* Ensure line height doesn't add extra space */
+}
+
+/* Styling for the Author Count badge */
+.author-count-badge {
+  display: inline-block;
+  background-color: #007bff; /* Blue background */
+  color: white; /* White text */
+  padding: 0.2em 0.5em; /* Small padding */
+  font-size: 0.7rem; /* Smaller font size */
+  font-weight: normal;
+  border-radius: var(--teaser-border-radius); /* Use existing border radius */
+  margin-top: 0.5em; /* Space above the badge */
+  margin-left: 0.5em; /* Space to the left if tag badge is also present */
+  margin-bottom: 0.5em; /* Space below the badge if image is not present */
+  line-height: 1; /* Ensure line height doesn't add extra space */
 }
 </style>
