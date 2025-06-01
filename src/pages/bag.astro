@@ -1,0 +1,96 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SimpleTeaser from "../components/SimpleTeaser.astro";
+import type { Props as SimpleTeaserProps } from "../components/SimpleTeaser.astro";
+
+export const prerender = true; // Or true, depending on whether data should be fetched at build time
+
+// Define a type for the expected structure of an article from the API
+interface ApiArticle {
+  id: string;
+  title: string;
+  image?: { // Image might be optional
+    uuid: string;
+  };
+  type: string; // To filter by article type
+  // Add other fields if necessary for filtering or future use
+}
+
+// Function to filter valid articles and map them to SimpleTeaserProps
+function processTeasers(items: any[]): SimpleTeaserProps[] {
+  return items
+    .filter((item: any): item is ApiArticle =>
+      item && typeof item.id === 'string' && item.type === "article" && typeof item.title === 'string'
+    )
+    .map((article: ApiArticle) => ({
+      id: article.id,
+      title: article.title,
+      imageUuid: article.image?.uuid || 'default-image-uuid', // Provide a fallback if image or uuid is missing
+    }));
+}
+
+// Attempt to fetch 20 items. If API structure is /collection/top/{publication}/{count}
+// If not, it will fetch whatever the base URL provides or error if format is wrong.
+const response = await fetch(
+  "https://www.fvn.no/client-api/collection/top/fvn/20"
+);
+
+let teasers: SimpleTeaserProps[] = [];
+if (response.ok) {
+  const data = await response.json();
+  // Assuming 'items' is the key in the response that holds the articles
+  teasers = processTeasers(data?.items || []);
+} else {
+  console.error(`Failed to fetch articles: ${response.status}`);
+  // Optionally, set a message to display on the page or handle error appropriately
+}
+
+
+// Set cache control headers if needed, similar to index.astro
+Astro.response.headers.set(
+  "CDN-Cache-Control",
+  "public, max-age=300, must-revalidate" // Example: 5 minutes
+);
+---
+
+<Layout title="Reading Bag | FV Fædrelandsvennen">
+  <main>
+    <h2>Reading Bag</h2>
+    <div class="teaser-grid-container">
+      {teasers.length > 0 ? (
+        teasers.map((teaserProps) => <SimpleTeaser {...teaserProps} />)
+      ) : (
+        <p>No articles found or error fetching articles.</p>
+      )}
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1.5rem;
+    max-width: 60ch; /* Default max-width */
+  }
+
+  .teaser-grid-container {
+    display: block;
+  }
+
+  @media (min-width: 1200px) { /* Adjust breakpoint as needed */
+    main {
+      max-width: 120ch;
+    }
+    .teaser-grid-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+      gap: 1.5rem;
+    }
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem; /* Added some margin below h2 */
+  }
+</style>
