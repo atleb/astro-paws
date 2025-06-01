@@ -10,7 +10,7 @@ interface ApiArticle {
   id: string;
   title: { value: string };
   //image?: { // Image optional, but nested as well 
-  media?: { imageAsset: { id: string; } };
+  media?: { imageAsset: { id: string } };
   type: string; // To filter by article type
   // Add other fields if necessary for filtering or future use
 }
