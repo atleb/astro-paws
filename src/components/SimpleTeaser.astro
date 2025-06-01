@@ -29,7 +29,7 @@ const isInList = isArticleInList(id);
   .simple-teaser.in-list {
     background-color: rgba(200, 255, 200, 0.75); /* Light green with some transparency / or a grey: rgba(0,0,0,0.1) */
     border-color: #009900; /* Darker green border */
-    transform: scale(0.95);
+    transform: scale(0.8);
     transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Smooth transition */
   }
   .add-to-list-btn {
@@ -53,7 +53,6 @@ const isInList = isArticleInList(id);
   // For this example, let's assume direct import works as expected in the Astro+nanostores setup.
 
   import { addArticle } from '../stores/readingList';
-  // Removed incorrect import: import { અસરકારકતા } from 'nanostores';
 
   const addButton = document.currentScript.parentElement.querySelector('.add-to-list-btn');
 
