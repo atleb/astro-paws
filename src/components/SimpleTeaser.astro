@@ -1,0 +1,100 @@
+---
+import { addArticle, isArticleInList } from '../stores/readingList';
+
+export interface Props {
+  id: string;
+  title: string;
+  imageUuid: string;
+}
+
+const { id, title, imageUuid } = Astro.props;
+
+// Get the reactive store for the current article's presence in the list
+const isInList = isArticleInList(id);
+---
+
+<div class:list={['simple-teaser', { 'in-list': isInList.value }]}>
+  <h2>{title} [{id}]</h2>
+  <p>Image UUID: {imageUuid}</p>
+  <button type="button" class="add-to-list-btn">(+)</button>
+</div>
+
+<style>
+  .simple-teaser {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+  }
+  .simple-teaser.in-list {
+    background-color: rgba(200, 255, 200, 0.75); /* Light green with some transparency / or a grey: rgba(0,0,0,0.1) */
+    border-color: #009900; /* Darker green border */
+    transform: scale(0.8);
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Smooth transition */
+  }
+  .add-to-list-btn {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  .add-to-list-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
+
+<script define:vars={{ articleId: id }}>
+  // Import the addArticle function for client-side use
+  // Note: Astro's <script> tags are processed and bundled.
+  // We need to ensure addArticle is available here.
+  // A common pattern is to make store actions available globally or via custom events if direct import is tricky.
+  // However, with nanostores, direct import in client scripts should work if project is set up for it.
+  // For this example, let's assume direct import works as expected in the Astro+nanostores setup.
+
+  import { addArticle } from '../stores/readingList';
+
+  const addButton = document.currentScript.parentElement.querySelector('.add-to-list-btn');
+
+  addButton.addEventListener('click', () => {
+    addArticle(articleId);
+    // After adding, the class reactivity is handled by nanostores and Astro's class:list directive,
+    // but that directive is server-side. For client-side immediate feedback without a page reload,
+    // we might need to use nanostores' client-side capabilities more directly if Astro doesn't auto-update.
+    // For now, let's assume the Astro setup handles this class update on store change.
+    // If not, we'd subscribe to the `isInList` store here and update the class manually.
+  });
+
+  // To make the class reactively update on the client-side without a full page reload,
+  // we need to subscribe to the store that `isArticleInList` returns.
+  import { isArticleInList } from '../stores/readingList'; // Re-import for client script context
+
+  const articleIsInListStore = isArticleInList(articleId);
+  const componentRoot = document.currentScript.parentElement;
+
+  const unsubscribe = articleIsInListStore.subscribe(isInListValue => {
+    if (isInListValue) {
+      componentRoot.classList.add('in-list');
+    } else {
+      componentRoot.classList.remove('in-list');
+    }
+  });
+
+  // Clean up the subscription when the component is removed from the DOM (Astro specific lifecycle)
+  // This is a simplified example; Astro's script lifecycle might need specific handling for cleanup.
+  // For instance, if Astro re-runs scripts on navigation, this could lead to multiple subscriptions.
+  // A more robust solution might involve Astro's `astro:page-load` or custom elements.
+
+  // Cleanup function for when the element is removed (simplified)
+  // This is not standard Astro API for script cleanup directly tied to component unmount.
+  // Proper cleanup in Astro for client-side scripts often relies on framework integrations (Vue, React, Svelte)
+  // or careful manual management with `astro:beforeunload` or similar global events.
+  // For this specific case, given nanostores are global, the subscription will persist as long as the page does.
+  // If the component instance itself is removed and re-added, new subscriptions occur.
+
+  // document.addEventListener('astro:before-swap', () => { // Example of potential cleanup hook
+  //   unsubscribe();
+  // });
+
+
+</script>

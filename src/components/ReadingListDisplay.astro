@@ -1,0 +1,74 @@
+---
+// No server-side props needed for this component as it gets data from the global store
+---
+
+<div id="reading-list-container" class="reading-list-box">
+  <h3>My Reading List</h3>
+  <ul id="reading-list-ul">
+    <!-- Article IDs will be rendered here by client-side script -->
+  </ul>
+  <p class="empty-list-message" style="display: none;">Your reading list is empty.</p>
+</div>
+
+<style>
+  .reading-list-box {
+    background-color: #e6ffe6; /* Light green background */
+    border: 1px solid #00cc00; /* Green border */
+    padding: 1rem;
+    margin-top: 1rem;
+    /* position: sticky;
+    top: 1rem; /* Adjust as needed */
+    /* Styles for sticky positioning can be refined later */
+  }
+  .reading-list-box h3 {
+    margin-top: 0;
+  }
+  .empty-list-message {
+    font-style: italic;
+  }
+</style>
+
+<script>
+  import { readingListItems } from '../stores/readingList.ts';
+
+  const listElement = document.getElementById('reading-list-ul');
+  const container = document.getElementById('reading-list-container');
+  const emptyMessage = container.querySelector('.empty-list-message');
+
+  function renderList(ids) {
+    if (!listElement || !emptyMessage) return;
+
+    // Clear current list
+    listElement.innerHTML = '';
+
+    if (ids.length === 0) {
+      emptyMessage.style.display = 'block';
+      listElement.style.display = 'none';
+    } else {
+      emptyMessage.style.display = 'none';
+      listElement.style.display = 'block';
+      ids.forEach(id => {
+        const listItem = document.createElement('li');
+        // For now, just display the ID. Title fetching would be an enhancement.
+        listItem.textContent = `Article ID: ${id}`;
+        listElement.appendChild(listItem);
+      });
+    }
+  }
+
+  // Initial render
+  renderList(readingListItems.get());
+
+  // Subscribe to store changes for reactive updates
+  const unsubscribe = readingListItems.subscribe(ids => {
+    renderList(ids);
+  });
+
+  // Astro doesn't have a built-in component unmount lifecycle for scripts in .astro files
+  // like frontend frameworks do. For long-lived global stores, this subscription
+  // will persist. If this component could be mounted/unmounted multiple times on a client-rendered
+  // page (e.g. in a SPA context Astro might enable), cleanup would be important.
+  // document.addEventListener('astro:before-swap', () => { // Example for Astro View Transitions
+  //   unsubscribe();
+  // });
+</script>
