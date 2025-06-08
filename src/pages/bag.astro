@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import SimpleTeaser from "../components/SimpleTeaser.astro";
 import type { Props as SimpleTeaserProps } from "../components/SimpleTeaser.astro";
+import ReadingListDisplay from '../components/ReadingListDisplay.astro';
 
 export const prerender = true; // Or true, depending on whether data should be fetched at build time
 
@@ -62,6 +63,7 @@ Astro.response.headers.set(
         <p>No articles found or error fetching articles.</p>
       )}
     </div>
+    <ReadingListDisplay />
   </main>
 </Layout>
 
