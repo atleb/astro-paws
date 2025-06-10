@@ -41,6 +41,8 @@ export default [
     // Vue-specific rules
     rules: {
       "vue/no-unused-vars": "warn",
+      "vue/multi-word-component-names": "warn", // moving over to astro
+      "vue/html-indent": "off", // Disable HTML indentation rule until prettier matches flow
       // "@typescript-eslint/no-explicit-any": "warn", // Downgrade to warning to fix gradually
     },
   },

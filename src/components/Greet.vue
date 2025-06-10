@@ -1,9 +1,10 @@
 <script setup lang="ts">
-interface greet {
+interface Greet {
     imgId: string;
     greeting?: string;
 }
-const props = defineProps<greet>();
+
+const { imgId, greeting } = defineProps<Greet>();
 
 function mediaUrl(imgId: string) {
     return "https://vcdn.polarismedia.no/" + imgId + "?fit=crop&h=400&q=80&tight=false&w=650";

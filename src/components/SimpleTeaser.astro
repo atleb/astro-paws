@@ -1,5 +1,5 @@
 ---
-import { addArticle, isArticleInList } from '../stores/readingList';
+import { isArticleInList } from "../stores/readingList";
 
 export interface Props {
   id: string;
@@ -13,7 +13,7 @@ const { id, title, imageUuid } = Astro.props;
 const isInList = isArticleInList(id);
 ---
 
-<div class:list={['simple-teaser', { 'in-list': isInList.value }]}>
+<div class:list={["simple-teaser", { "in-list": isInList.value }]}>
   <h2>{title} [{id}]</h2>
   <p>Image UUID: {imageUuid}</p>
   <button type="button" class="add-to-list-btn">(+)</button>
@@ -27,10 +27,17 @@ const isInList = isArticleInList(id);
     background-color: #f9f9f9;
   }
   .simple-teaser.in-list {
-    background-color: rgba(200, 255, 200, 0.75); /* Light green with some transparency / or a grey: rgba(0,0,0,0.1) */
+    background-color: rgba(
+      200,
+      255,
+      200,
+      0.75
+    ); /* Light green with some transparency / or a grey: rgba(0,0,0,0.1) */
     border-color: #009900; /* Darker green border */
     transform: scale(0.8);
-    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Smooth transition */
+    transition:
+      transform 0.2s ease-in-out,
+      background-color 0.2s ease-in-out; /* Smooth transition */
   }
   .add-to-list-btn {
     padding: 0.5rem 1rem;
@@ -46,25 +53,26 @@ const isInList = isArticleInList(id);
 
 <script type="module" define:vars={{ articleId: id }}>
   // For detailed script comments, see src/components/comments.md
-  import { addArticle } from '../stores/readingList';
+  import { addArticle } from "../stores/readingList";
 
-  const addButton = document.currentScript.parentElement.querySelector('.add-to-list-btn');
+  const addButton =
+    document.currentScript.parentElement.querySelector(".add-to-list-btn");
 
-  addButton.addEventListener('click', () => {
+  addButton.addEventListener("click", () => {
     addArticle(articleId);
   });
 
-  import { isArticleInList } from '../stores/readingList'; // Re-import for client script context
+  import { isArticleInList } from "../stores/readingList"; // Re-import for client script context
 
   const articleIsInListStore = isArticleInList(articleId);
   const componentRoot = document.currentScript.parentElement;
 
-  const unsubscribe = articleIsInListStore.subscribe(isInListValue => {
+  // eslint-disable-next-line no-unused-vars
+  const unsubscribe = articleIsInListStore.subscribe((isInListValue) => {
     if (isInListValue) {
-      componentRoot.classList.add('in-list');
+      componentRoot.classList.add("in-list");
     } else {
-      componentRoot.classList.remove('in-list');
+      componentRoot.classList.remove("in-list");
     }
   });
-
 </script>
