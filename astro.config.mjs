@@ -13,9 +13,12 @@ const prodConfig = {
     cacheOnDemandPages: true, // default to up to one year, set headers to specify
   }),
 };
+// Uncomment the devConfig if you want to use it for local development or lint rule
+/* 
 const devConfig = {
   integrations: [vue()],
 };
+*/
 
 // read more at doc site: https://astro.build/config
 export default defineConfig(
