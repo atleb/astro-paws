@@ -1,4 +1,4 @@
-import { atom, computed } from 'nanostores';
+import { atom, computed } from "nanostores";
 
 // The core store an array of article IDs
 export const readingListItems = atom<string[]>([]);
@@ -14,10 +14,10 @@ export function addArticle(id: string): void {
 // Action to remove an article ID from the list
 export function removeArticle(id: string): void {
   const currentList = readingListItems.get();
-  readingListItems.set(currentList.filter(articleId => articleId !== id));
+  readingListItems.set(currentList.filter((articleId) => articleId !== id));
 }
 
 // Computed store to check if a specific article is in the list
 export function isArticleInList(id: string) {
-  return computed(readingListItems, list => list.includes(id));
+  return computed(readingListItems, (list) => list.includes(id));
 }

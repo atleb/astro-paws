@@ -1,5 +1,5 @@
 ---
-import { isArticleInList } from "../stores/readingList";
+import BagButton from "./BagButton.vue";
 
 export interface Props {
   id: string;
@@ -8,15 +8,12 @@ export interface Props {
 }
 
 const { id, title, imageUuid } = Astro.props;
-
-// Get the reactive store for the current article's presence in the list
-const isInList = isArticleInList(id);
 ---
 
-<div class:list={["simple-teaser", { "in-list": isInList.value }]}>
+<div class:list={["simple-teaser"]}>
   <h2>{title} [{id}]</h2>
   <p>Image UUID: {imageUuid}</p>
-  <button type="button" class="add-to-list-btn">(+)</button>
+  <BagButton articleId={id} client:load />
 </div>
 
 <style>
@@ -50,29 +47,3 @@ const isInList = isArticleInList(id);
     background-color: #0056b3;
   }
 </style>
-
-<script type="module" define:vars={{ articleId: id }}>
-  // For detailed script comments, see src/components/comments.md
-  import { addArticle } from "../stores/readingList";
-
-  const addButton =
-    document.currentScript.parentElement.querySelector(".add-to-list-btn");
-
-  addButton.addEventListener("click", () => {
-    addArticle(articleId);
-  });
-
-  import { isArticleInList } from "../stores/readingList"; // Re-import for client script context
-
-  const articleIsInListStore = isArticleInList(articleId);
-  const componentRoot = document.currentScript.parentElement;
-
-  // eslint-disable-next-line no-unused-vars
-  const unsubscribe = articleIsInListStore.subscribe((isInListValue) => {
-    if (isInListValue) {
-      componentRoot.classList.add("in-list");
-    } else {
-      componentRoot.classList.remove("in-list");
-    }
-  });
-</script>
