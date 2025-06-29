@@ -3,7 +3,10 @@
 ---
 
 <div id="reading-list-container" class="reading-list-box">
-  <h3>My Reading List</h3>
+  <div class="reading-list-header">
+    <h3>My Reading List</h3>
+    <button id="clear-list-btn" class="clear-btn">Clear List</button>
+  </div>
   <ul id="reading-list-ul">
     <!-- Article IDs will be rendered here by client-side script -->
   </ul>
@@ -18,15 +21,50 @@
     border: 1px solid #00cc00; /* Green border */
     padding: 1rem;
     margin-top: 1rem;
-    /* position: sticky;
-    top: 1rem; /* Adjust as needed */
-    /* Styles for sticky positioning can be refined later */
+  }
+  .reading-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .reading-list-box h3 {
     margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+  }
+
+  .remove-item {
+    background: none;
+    border: none;
+    color: #cc0000;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+  }
+
+  .remove-item:hover {
+    opacity: 0.7;
   }
   .empty-list-message {
     font-style: italic;
+  }
+  .clear-btn {
+    background: none;
+    border: 1px solid #cc0000;
+    color: #cc0000;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .clear-btn:hover {
+    background-color: #ffeeee;
   }
 </style>
 
@@ -40,6 +78,7 @@
   const emptyMessage = container?.querySelector(
     ".empty-list-message"
   ) as HTMLElement;
+  const clearButton = document.getElementById("clear-list-btn");
 
   function renderList(ids: readonly string[]) {
     if (!listElement || !emptyMessage) return;
@@ -50,19 +89,47 @@
     if (ids.length === 0) {
       emptyMessage.style.display = "block";
       listElement.style.display = "none";
+      if (clearButton) clearButton.style.display = "none";
     } else {
       emptyMessage.style.display = "none";
       listElement.style.display = "block";
+      if (clearButton) clearButton.style.display = "inline-block";
       ids.forEach((id) => {
         const listItem = document.createElement("li");
         // For now, just display the ID. Title fetching would be an enhancement.
         listItem.textContent = `Article ID: ${id}`;
+
+        // Add a remove button for each item
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "×";
+        removeBtn.className = "remove-item";
+        removeBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          import("../stores/readingList.ts").then(({ removeArticle }) => {
+            removeArticle(id);
+          });
+        });
+
+        listItem.appendChild(removeBtn);
         listElement.appendChild(listItem);
       });
     }
   }
 
+  // Set up clear button handler
+  if (clearButton) {
+    clearButton.addEventListener("click", () => {
+      if (confirm("Are you sure you want to clear your reading list?")) {
+        import("../stores/readingList.ts").then(({ clearReadingList }) => {
+          clearReadingList();
+        });
+      }
+    });
+  }
+
+  // Initialize with data from localStorage (via the store)
   renderList(readingListItems.get());
+
   // Subscribe to store changes for reactive updates
   readingListItems.subscribe((ids) => renderList(ids));
 </script>
