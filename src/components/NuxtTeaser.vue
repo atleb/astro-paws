@@ -71,8 +71,10 @@ const isNonNewsPresentation = computed(() => {
 </script>
 
 <template>
-
-  <a :href="`https://www.fvn.no/i/${id}`" class="teaser-link-wrapper">
+<a
+:href="`https://www.fvn.no/i/${id}`"
+class="teaser-link-wrapper"
+>
     <!-- 
       Root element for the teaser.
       Applies:
@@ -82,15 +84,33 @@ const isNonNewsPresentation = computed(() => {
       - 'no-image' class conditionally if `hasImage` is falsy.
     -->
     <div :class="teaserClasses">
-      <h4 v-if="isBreakingNews" class="breaking-news-heading">VARSKO!</h4>
-      <span v-if="isOpenAccess" class="open-access-icon">OPEN</span>
+      <h4
+v-if="isBreakingNews"
+class="breaking-news-heading"
+>VARSKO!</h4>
+      <span
+v-if="isOpenAccess"
+class="open-access-icon"
+>OPEN</span>
       <h3>{{ title?.value }}</h3>
-      <p class="lead" v-if="lead">
+      <p
+v-if="lead"
+class="lead"
+>
         {{ lead }}
       </p>
-      <span v-if="showTagCountBadge" class="tag-count-badge">3+ tags</span>
-      <span v-if="showAuthorCountBadge" class="author-count-badge">2+ authors</span>
-      <img v-if="hasImage" :src="mediaUrl(media.imageAsset.id)" />
+      <span
+v-if="showTagCountBadge"
+class="tag-count-badge"
+>3+ tags</span>
+      <span
+v-if="showAuthorCountBadge"
+class="author-count-badge"
+>2+ authors</span>
+      <img
+v-if="hasImage"
+:src="mediaUrl(media.imageAsset.id)"
+>
     </div>
   </a>
 </template>

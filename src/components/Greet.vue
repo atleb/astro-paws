@@ -4,7 +4,7 @@ interface Greet {
     greeting?: string;
 }
 
-const { imgId, greeting } = defineProps<Greet>();
+const { imgId, greeting = "naut" } = defineProps<Greet>();
 
 function mediaUrl(imgId: string) {
     return "https://vcdn.polarismedia.no/" + imgId + "?fit=crop&h=400&q=80&tight=false&w=650";
@@ -13,8 +13,10 @@ function mediaUrl(imgId: string) {
 
 <template>
     <div>
-        <h2 v-if="greeting">Hey astro {{ greeting }}</h2>
-        <img :src="mediaUrl(imgId)" />
+        <h2 v-if="greeting">
+            Hey astro {{ greeting }}
+        </h2>
+        <img :src="mediaUrl(imgId)">
     </div>
 </template>
 

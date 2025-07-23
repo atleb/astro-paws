@@ -24,8 +24,12 @@ function toggleReadingList() {
 
 <template>
     <div>
-        <button type="button" @click="toggleReadingList()" :aria-pressed="isCurrentlyInList"
-            :class="{ 'in-list': isCurrentlyInList }">
+        <button
+type="button"
+:aria-pressed="isCurrentlyInList"
+:class="{ 'in-list': isCurrentlyInList }"
+            @click="toggleReadingList()"
+>
             <span class="icon">{{ isCurrentlyInList ? '✓' : '+' }}</span>
             <span>{{ isCurrentlyInList ? 'Saved to reading list' : 'Add to reading list' }}</span>
         </button>
