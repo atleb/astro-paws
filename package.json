@@ -17,7 +17,7 @@
     "@astrojs/netlify": "6.0.0",
     "@astrojs/vue": "5.0.1",
     "@nanostores/vue": "1.0.0",
-    "astro": "5.0.1",
+    "astro": "5.12.2",
     "nanostores": "1.0.1",
     "vue": "3.5.13"
   },
